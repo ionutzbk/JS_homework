@@ -1,42 +1,136 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Rock Paper Scissors</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rock Paper Scissors</title>
+  <style>
+    #game-container {
+      text-align: center;
+    }
+
+    #rock {
+      width: 40px;
+      height: auto;
+    }
+
+    #paper {
+      width: 40px;
+      height: auto;
+    }
+
+    #scissors {
+      width: 40px;
+      height: auto;
+
+    }
+
+    .option {
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .option:hover {
+      transform: scale(2);
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    #result {
+      animation: fadeIn 0.5s ease-in-out;
+    }
+  </style>
 </head>
+
 <body>
+  <div id="game-container">
+    <h1>Rock Paper Scissors</h1>
+    <div id="game">
+      <img id="rock" class="option" src="rock.png" alt="Rock">
+      <img id="paper" class="option" src="paper.png" alt="Paper">
+      <img id="scissors" class="option" src="scissor.png" alt="Scissors">
+    </div>
+    <div id="result"></div>
+    <div id="counter">Plays: <span id="play-count">0</span></div>
+    <div id="score">Player: <span id="player-score">0</span> - Computer: <span id="computer-score">0</span></div>
+    <div id="timer">Time: <span id="time">0</span></div>
+  </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const options = ['rock', 'paper', 'scissors'];
+      let playCount = 0;
+      let playerScore = 0;
+      let computerScore = 0;
+      let timer;
 
-<h1>Rock Paper Scissors</h1>
 
-<div id="choices">
-  <button onclick="playGame('rock')">Rock</button>
-  <button onclick="playGame('paper')">Paper</button>
-  <button onclick="playGame('scissors')">Scissors</button>
-</div>
+      function computerPlay() {
+        return options[Math.floor(Math.random() * options.length)];
+      }
 
-<div id="result"></div>
 
-<script>
-function playGame(playerChoice) {
-  var choices = ['rock', 'paper', 'scissors'];
-  var computerChoice = choices[Math.floor(Math.random() * choices.length)];
-  
-  var result;
-  
-  if (playerChoice === computerChoice) {
-    result = "It's a tie!";
-  } else if ((playerChoice === 'rock' && computerChoice === 'scissors') ||
-             (playerChoice === 'paper' && computerChoice === 'rock') ||
-             (playerChoice === 'scissors' && computerChoice === 'paper')) {
-    result = "You win!";
-  } else {
-    result = "Computer wins!";
-  }
-  
-  document.getElementById('result').innerText = "You chose " + playerChoice + ", computer chose " + computerChoice + ". " + result;
-}
-</script>
+      function determineWinner(playerSelection, computerSelection) {
+        if (playerSelection === computerSelection) {
+          return 'It\'s a tie!';
+        } else if ((playerSelection === 'rock' && computerSelection === 'scissors') ||
+          (playerSelection === 'paper' && computerSelection === 'rock') ||
+          (playerSelection === 'scissors' && computerSelection === 'paper')) {
+          playerScore++;
+          return 'You win!';
+        } else {
+          computerScore++;
+          return 'Computer wins!';
+        }
+      }
 
+
+      function updateCounter() {
+        playCount++;
+        document.getElementById('play-count').textContent = playCount;
+      }
+
+
+      function updateScore() {
+        document.getElementById('player-score').textContent = playerScore;
+        document.getElementById('computer-score').textContent = computerScore;
+      }
+
+      function updateTimer() {
+        let time = 0;
+        timer = setInterval(function () {
+          time++;
+          document.getElementById('time').textContent = time;
+        }, 1000);
+      }
+
+
+      function playGame(playerSelection) {
+        clearInterval(timer);
+        updateTimer();
+        const computerSelection = computerPlay();
+        const result = determineWinner(playerSelection, computerSelection);
+        document.getElementById('result').textContent = result;
+        updateCounter();
+        updateScore();
+      }
+
+      // Event listeners for player's choices
+      document.querySelectorAll('.option').forEach(option => {
+        option.addEventListener('click', function () {
+          playGame(option.id);
+        });
+      });
+    });
+  </script>
 </body>
+
 </html>
